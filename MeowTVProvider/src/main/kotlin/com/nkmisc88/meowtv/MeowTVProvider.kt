@@ -47,12 +47,16 @@ class MeowTVProvider : MainAPI() {
             ?.value
             ?.toIntOrNull()
 
-        return newMovieSearchResponse(
-            title = title,
-            url = url,
-            type = TvType.Movie,
-            posterUrl = poster
-        ) {
+ return newMovieLoadResponse(
+    name = title,
+    url = url,
+    type = TvType.Movie,
+    dataUrl = url
+) {
+    this.posterUrl = poster
+    this.plot = description
+    this.year = year
+}
             this.posterUrl = poster
             this.plot = description
             this.year = year
