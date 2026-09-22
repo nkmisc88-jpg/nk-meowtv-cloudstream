@@ -47,16 +47,12 @@ class MeowTVProvider : MainAPI() {
             ?.value
             ?.toIntOrNull()
 
- return newMovieLoadResponse(
-    name = title,
-    url = url,
-    type = TvType.Movie,
-    dataUrl = url
-) {
-    this.posterUrl = poster
-    this.plot = description
-    this.year = year
-}
+        return newMovieLoadResponse(
+            name = title,
+            url = url,
+            type = TvType.Movie,
+            dataUrl = url
+        ) {
             this.posterUrl = poster
             this.plot = description
             this.year = year
@@ -69,8 +65,6 @@ class MeowTVProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        // Playback will be implemented separately after we confirm
-        // the current MeowTV playback/API structure.
         return false
     }
 }
