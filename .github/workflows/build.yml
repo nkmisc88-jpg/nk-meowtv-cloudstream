@@ -67,9 +67,43 @@ jobs:
 
       - name: Verify MeowTV metadata
         run: |
-          echo "Checking MeowTVProvider metadata..."
-          grep -A25 -B5 '"internalName": "MeowTVProvider"' \
-            "$GITHUB_WORKSPACE/builds/plugins.json"
+          python3 - <<'PY'
+          import json
+
+          path = "/home/runner/work/${GITHUB_REPOSITORY##*/}/${GITHUB_REPOSITORY##*/}/builds/plugins.json"
+
+          with open(path, "r", encoding="utf-8") as f:
+              plugins = json.load(f)
+
+          meow = next(
+              (p for p in plugins
+               if p.get("internalName") == "MeowTVProvider"),
+              None
+          )
+
+          if meow is None:
+              raise SystemExit("ERROR: MeowTVProvider not found")
+
+          print("===== MeowTVProvider =====")
+          print("name:", meow.get("name"))
+          print("internalName:", meow.get("internalName"))
+          print("version:", meow.get("version"))
+          print("status:", meow.get("status"))
+          print("url:", meow.get("url"))
+          print("==========================")
+
+          if meow.get("status") != 1:
+              raise SystemExit(
+                  f"ERROR: MeowTV status is {meow.get('status')}, expected 1"
+              )
+
+          if meow.get("version") != 2:
+              raise SystemExit(
+                  f"ERROR: MeowTV version is {meow.get('version')}, expected 2"
+              )
+
+          print("SUCCESS: MeowTV metadata is correct.")
+          PY
 
       - name: Push builds
         working-directory: builds
