@@ -23,38 +23,33 @@ jobs:
 
     steps:
 
-      # Checkout source repository
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          path: "src"
+          ref: master
+          path: src
 
-      # Checkout builds branch
       - name: Checkout builds
         uses: actions/checkout@v4
         with:
-          ref: "builds"
-          path: "builds"
+          ref: builds
+          path: builds
 
-      # Remove previous plugin files
       - name: Clean old builds
         run: |
           rm -f "$GITHUB_WORKSPACE/builds/"*.cs3
           rm -f "$GITHUB_WORKSPACE/builds/"*.jar
           rm -f "$GITHUB_WORKSPACE/builds/plugins.json"
 
-      # Setup Java 17
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      # Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
 
-      # Build CloudStream plugins
       - name: Build Plugins
         working-directory: src
         run: |
@@ -70,7 +65,12 @@ jobs:
 
           cp build/plugins.json "$GITHUB_WORKSPACE/builds/"
 
-      # Push generated files to builds branch
+      - name: Verify MeowTV metadata
+        run: |
+          echo "Checking MeowTVProvider metadata..."
+          grep -A25 -B5 '"internalName": "MeowTVProvider"' \
+            "$GITHUB_WORKSPACE/builds/plugins.json"
+
       - name: Push builds
         working-directory: builds
         run: |
